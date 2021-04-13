@@ -601,6 +601,18 @@ Since we cannot proceed, ghstack will abort now.
                         "-p", self.base_commit,
                         input=commit.summary + "\n\n[ghstack-poisoned]"))
 
+        cur_branch = self.sh.git("rev-parse",
+            "--abbrev-ref",
+            "HEAD")
+        self.sh.git("checkout", new_pull)
+        self.sh.git("commit",
+            "--amend",
+            "--no-edit",
+            "--author=\"{author}\"".format(author=commit.author))
+        new_pull = GitCommitHash(
+            self.sh.git("rev-parse", "HEAD"))
+        self.sh.git("checkout", cur_branch)
+
         # Push the branches, so that we can create a PR for them
         new_branches = (
             push_spec(new_pull, branch_head(self.username, ghnum)),
@@ -652,6 +664,17 @@ Since we cannot proceed, ghstack will abort now.
             tree,
             "-p", self.base_orig,
             input=commit_msg))
+        cur_branch = self.sh.git("rev-parse",
+            "--abbrev-ref",
+            "HEAD")
+        self.sh.git("checkout", new_orig)
+        self.sh.git("commit",
+            "--amend",
+            "--no-edit",
+            "--author=\"{author}\"".format(author=commit.author))
+        new_orig = GitCommitHash(
+            self.sh.git("rev-parse", "HEAD"))
+        self.sh.git("checkout", cur_branch)
 
         self.stack_meta.append(DiffMeta(
             title=title,

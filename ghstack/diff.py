@@ -112,3 +112,6 @@ class Diff:
     # require me to read out diff into memory and I don't really want
     # to do that if I don't have to.
     patch: Patch
+
+    # Original author of the diff.
+    author: str
